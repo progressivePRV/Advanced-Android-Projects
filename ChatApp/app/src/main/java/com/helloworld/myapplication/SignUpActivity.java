@@ -31,7 +31,6 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -65,15 +64,8 @@ public class SignUpActivity extends AppCompatActivity {
 
                         } else if (options[item].equals("Choose from Gallery")) {
                             //trying to get the permission for the profile picture. but it is not happening.
-//                            String[] galleryPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-//                            if (EasyPermissions.hasPermissions(SignUpActivity.this, galleryPermissions)) {
                                 Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(pickPhoto , 1);
-//                            } else {
-//                                EasyPermissions.requestPermissions(SignUpActivity.this, "Access for storage",
-//                                        101, galleryPermissions);
-//                            }
-
                         } else if (options[item].equals("Cancel")) {
                             dialog.dismiss();
                         }

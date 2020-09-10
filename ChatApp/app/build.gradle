@@ -33,8 +33,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics:17.5.0'
     implementation 'com.google.firebase:firebase-auth:19.3.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    // For developers using the Android Support Library
-    implementation 'pub.devrel:easypermissions:2.0.1'
-    // For developers using AndroidX in their applications
-    implementation 'pub.devrel:easypermissions:3.0.0'
 }
