@@ -28,6 +28,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -62,15 +65,14 @@ public class SignUpActivity extends AppCompatActivity {
 
                         } else if (options[item].equals("Choose from Gallery")) {
                             //trying to get the permission for the profile picture. but it is not happening.
-                            String[] galleryPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                            if (EasyPermissions.hasPermissions(SignUpActivity.this, galleryPermissions)) {
+//                            String[] galleryPermissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+//                            if (EasyPermissions.hasPermissions(SignUpActivity.this, galleryPermissions)) {
                                 Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(pickPhoto , 1);
-                            } else {
-                                EasyPermissions.requestPermissions(SignUpActivity.this, "Access for storage",
-                                        101, galleryPermissions);
-                            }
-
+//                            } else {
+//                                EasyPermissions.requestPermissions(SignUpActivity.this, "Access for storage",
+//                                        101, galleryPermissions);
+//                            }
 
                         } else if (options[item].equals("Cancel")) {
                             dialog.dismiss();
@@ -160,21 +162,15 @@ public class SignUpActivity extends AppCompatActivity {
                     break;
                 case 1:
                     if (resultCode == RESULT_OK && data != null) {
-                        Uri selectedImage =  data.getData();
-                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                        if (selectedImage != null) {
-                            Cursor cursor = getContentResolver().query(selectedImage,
-                                    filePathColumn, null, null, null);
-                            if (cursor != null) {
-                                cursor.moveToFirst();
-                                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                                String picturePath = cursor.getString(columnIndex);
-                                Log.d("demo",picturePath);
-                                imageView.setImageBitmap(BitmapFactory.decodeFile(picturePath));
-                                cursor.close();
-                            }
+                        try {
+                            final Uri imageUri = data.getData();
+                            final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                            final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                            imageView.setImageBitmap(selectedImage);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                            Toast.makeText(SignUpActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
                         }
-
                     }
                     break;
             }
