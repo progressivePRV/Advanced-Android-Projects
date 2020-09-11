@@ -20,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SidebarActivity"></activity>
+        <activity android:name=".ChatRoomCreateActivity"></activity>
+        <activity android:name=".SidebarActivity" />
         <activity android:name=".ChatRoomActivity" />
         <activity android:name=".SignUpActivity" />
         <activity android:name=".MainActivity">
