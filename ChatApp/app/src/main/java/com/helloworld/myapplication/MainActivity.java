@@ -95,6 +95,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // forgot password
+
+        findViewById(R.id.buttonForgotPassword).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText email = findViewById(R.id.loginText);
+                if(checkValidations(email) && checkEmailValidations(email)){
+                    mAuth.sendPasswordResetEmail(email.getText().toString().trim()).addOnCompleteListener(MainActivity.this, new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                Toast.makeText(MainActivity.this, "Email for password reset sent", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(MainActivity.this, "Failed to send password reset mail", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            }
+        });
     }
 
     //for showing the progress dialog
