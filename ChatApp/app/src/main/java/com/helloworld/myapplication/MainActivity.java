@@ -2,6 +2,7 @@ package com.helloworld.myapplication;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -31,10 +32,11 @@ public class MainActivity extends AppCompatActivity {
         if(currentUser!=null){
             Log.d("demo","CurrentUser" + currentUser.getDisplayName());
             hideProgressBarDialog();
-            Intent intent = new Intent(MainActivity.this, ChatRoomActivity.class);
+            Intent intent = new Intent(MainActivity.this, SidebarActivity.class);//ChatRoomActivity.class);
             //sending userid to the next activity and based on user id we can fetch the data from the firebase.
             intent.putExtra("user",currentUser.getUid());
             startActivity(intent);
+            finish();
         } else{
             Log.d("demo","Please login to go see your contacts");
             hideProgressBarDialog();
@@ -45,7 +47,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar t = findViewById(R.id.toolbar_in_main);
+        setSupportActionBar(t);
         setTitle("Chat Room Login");
+
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
@@ -68,10 +74,11 @@ public class MainActivity extends AppCompatActivity {
                                         Log.d("demo", "signInWithEmail:success");
                                         FirebaseUser user = mAuth.getCurrentUser();
                                         hideProgressBarDialog();
-                                        Intent intent = new Intent(MainActivity.this, ChatRoomActivity.class);
+                                        Intent intent = new Intent(MainActivity.this, SidebarActivity.class);//ChatRoomActivity.class);
                                         //sending userid to the next activity and based on user id we can fetch the data from the firebase.
                                         intent.putExtra("user",user.getUid());
                                         startActivity(intent);
+                                        finish();
                                     } else {
                                         // If sign in fails, display a message to the user.
                                         Log.w("demo", "signInWithEmail:failure", task.getException());
@@ -92,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
 
