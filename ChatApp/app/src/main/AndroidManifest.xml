@@ -20,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".showProfile"></activity>
+        <activity android:name=".ViewersListActivity"></activity>
+        <activity android:name=".showProfile" />
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".ChatRoomCreateActivity" />
         <activity android:name=".SidebarActivity" />

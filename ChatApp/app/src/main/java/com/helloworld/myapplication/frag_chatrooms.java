@@ -1,5 +1,6 @@
 package com.helloworld.myapplication;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,13 +22,23 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,9 +53,15 @@ import java.util.Map;
 public class frag_chatrooms extends Fragment implements ChatRoomAdapter.InteractWithRecyclerView{
 
     private FirebaseFirestore db;
+    FirebaseAuth mAuth;
     private RecyclerView mainRecyclerView;
     private RecyclerView.Adapter mainAdapter;
     private RecyclerView.LayoutManager mainLayoutManager;
+    private ProgressDialog progressDialog;
+    DatabaseReference mDatabase;
+    FirebaseStorage storage;
+    StorageReference storageReference;
+    UserProfile user;
     ArrayList<String> globalChatRoomList = new ArrayList<>();
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -105,6 +122,8 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
             }
         });
 
+
+
         db = FirebaseFirestore.getInstance();
         mainRecyclerView = (RecyclerView) getView().findViewById(R.id.chatRoomRecyclerView);
         mainLayoutManager = new LinearLayoutManager(getActivity());
@@ -157,11 +176,74 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
     }
 
     @Override
-    public void getDetails(String chatRoom, int position) {
+    public void getDetails(final String chatRoom, int position) {
         Log.d("demo", "It is getting the chatRoom details to go to the next Activity");
-        Toast.makeText(getActivity(), "Successfully selected the chatRoom", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
-        intent.putExtra("chatRoomName",chatRoom);
-        startActivity(intent);
+        mAuth= FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser()!=null){
+            showProgressBarDialog();
+            mDatabase = FirebaseDatabase.getInstance().getReference("users");
+            mDatabase.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    final DataSnapshot snap = snapshot;
+                    storage = FirebaseStorage.getInstance();
+                    storageReference = storage.getReference();
+                    final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getCurrentUser().getUid());
+
+                    //Setting up all the details of the user for the message
+                    user = new UserProfile(snap.child("firstName").getValue(String.class)
+                            ,snap.child("lastName").getValue(String.class)
+                            ,snap.child("gender").getValue(String.class)
+                            ,snap.child("email").getValue(String.class)
+                            ,snap.child("city").getValue(String.class)
+                            ,snap.child("profileImage").getValue(String.class)
+                            ,mAuth.getCurrentUser().getUid());
+
+                    //Storing all the info along with the message in the firestore
+                    db.collection("ChatRoomList").document(chatRoom)
+                            .collection("CurrentViewers")
+                            .document(user.uid)
+                            .set(user)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+//                                     Toast.makeText(ChatRoomActivity.this, "Message sent!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
+                                    intent.putExtra("chatRoomName",chatRoom);
+                                    startActivity(intent);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "Error occurred in setting up the chat room. Please try again!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    hideProgressBarDialog();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(getActivity(), "Cancelled Operation", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else{
+            Toast.makeText(getActivity(), "User Not Logged In", Toast.LENGTH_SHORT).show();
+            Log.d("demo","User not logged in");
+        }
+    }
+
+    //for showing the progress dialog
+    public void showProgressBarDialog()
+    {
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    //for hiding the progress dialog
+    public void hideProgressBarDialog()
+    {
+        progressDialog.dismiss();
     }
 }

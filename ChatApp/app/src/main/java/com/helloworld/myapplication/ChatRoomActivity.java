@@ -207,6 +207,16 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
             }
         });
 
+        //For viewing the current users
+        findViewById(R.id.viewUsersButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ChatRoomActivity.this, ViewersListActivity.class);
+                intent.putExtra("chatRoomName",chatRoomName);
+                //started activity for result because when the user comes back the user profile should be deleted from the currentViewers database
+                startActivity(intent);
+            }
+        });
     }
 
     //For checking the empty strings
