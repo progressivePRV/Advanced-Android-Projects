@@ -207,7 +207,8 @@ public class SignUpActivity extends AppCompatActivity {
         findViewById(R.id.buttonCancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent loginIntent = new Intent(SignUpActivity.this,MainActivity.class);
+                startActivity(loginIntent);
             }
         });
 
