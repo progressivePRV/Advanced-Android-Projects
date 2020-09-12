@@ -27,4 +27,11 @@
     <string name="ViewUsers">View Users</string>
     <string name="EnterMessage">Enter Message</string>
     <string name="sendMessage">Send</string>
+    <string name="firstNameLabel">First Name:</string>
+    <string name="lastNameLabel">Last Name:</string>
+    <string name="genderLabel">"Gender: "</string>
+    <string name="emailLabel">Email:</string>
+    <string name="cityLabel">City:</string>
+    <string name="editProfileLabel">Edit Profile</string>
+    <string name="edit">Edit</string>
 </resources>
