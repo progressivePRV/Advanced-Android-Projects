@@ -106,33 +106,43 @@ public class frag_profile extends Fragment {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                    final DataSnapshot snap = snapshot;
+                    User u = snapshot.getValue(User.class);
+                    Picasso.get().load(u.profileImage).into(profileImage);
+                    textViewFirstName.setText(u.firstName);
+                    textViewLastName.setText(u.lastName);
+                    textViewGender.setText(u.gender);
+                    textViewEmail.setText(u.email);
+                    textViewCity.setText(u.city);
+                    hideProgressBarDialog();
 
-                    storage = FirebaseStorage.getInstance();
-                    storageReference = storage.getReference();
 
-                    final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getCurrentUser().getUid());
-
-                    profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Picasso.get().load(uri.toString()).into(profileImage);
-                            user = new UserProfile(snap.child("firstName").getValue(String.class),snap.child("lastName").getValue(String.class),snap.child("gender").getValue(String.class),snap.child("email").getValue(String.class),snap.child("city").getValue(String.class),snap.child("profileImage").getValue(String.class),mAuth.getCurrentUser().getUid());
-
-                            textViewFirstName.setText(user.firstName);
-                            textViewLastName.setText(user.lastName);
-                            textViewGender.setText(user.gender);
-                            textViewEmail.setText(user.email);
-                            textViewCity.setText(user.city);
-                            hideProgressBarDialog();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            hideProgressBarDialog();
-                            Toast.makeText(getContext(), "Failed to Load Profile", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+//                    final DataSnapshot snap = snapshot;
+//
+//                    storage = FirebaseStorage.getInstance();
+//                    storageReference = storage.getReference();
+//
+//                    final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getCurrentUser().getUid());
+//
+//                    profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//                            Picasso.get().load(uri.toString()).into(profileImage);
+//                            user = new UserProfile(snap.child("firstName").getValue(String.class),snap.child("lastName").getValue(String.class),snap.child("gender").getValue(String.class),snap.child("email").getValue(String.class),snap.child("city").getValue(String.class),snap.child("profileImage").getValue(String.class),mAuth.getCurrentUser().getUid());
+//
+//                            textViewFirstName.setText(user.firstName);
+//                            textViewLastName.setText(user.lastName);
+//                            textViewGender.setText(user.gender);
+//                            textViewEmail.setText(user.email);
+//                            textViewCity.setText(user.city);
+//                            hideProgressBarDialog();
+//                        }
+//                    }).addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            hideProgressBarDialog();
+//                            Toast.makeText(getContext(), "Failed to Load Profile", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
                 }
 
                 @Override
