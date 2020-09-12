@@ -6,7 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,19 +19,30 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class ChatRoomActivity extends AppCompatActivity {
+public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAdapter.InteractWithRecyclerView{
 
     FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -36,6 +51,12 @@ public class ChatRoomActivity extends AppCompatActivity {
     private RecyclerView.Adapter mainAdapter;
     private RecyclerView.LayoutManager mainLayoutManager;
     ArrayList<ChatMessageDetails> chatMessageDetailsArrayList = new ArrayList<>();
+    DatabaseReference mDatabase;
+    FirebaseStorage storage;
+    StorageReference storageReference;
+    UserProfile user;
+    private EditText enterMessageText;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +79,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         chatRoomName = getIntent().getExtras().getString("chatRoomName");
 
         //Adding snapshot listener to the firestore
-        db.collection("ChatRoomMessages").document(chatRoomName).collection("Messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        db.collection("ChatRoomList").document(chatRoomName).collection("Messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
                                 @Nullable FirebaseFirestoreException e) {
@@ -75,15 +96,26 @@ public class ChatRoomActivity extends AppCompatActivity {
                             chatMessageDetailsArrayList.add(dc.getDocument().toObject(ChatMessageDetails.class));
                             break;
                         case MODIFIED:
-                            //For now I dont think there is any modification
+                            //There is a modification when the user sets the favorites
                             break;
                         case REMOVED:
                             Log.d("TAG", "Removed Msg: " + dc.getDocument().toObject(ChatMessageDetails.class));
                             //Functionality to be completed yet
+                            int i=0;
+                            ChatMessageDetails deletedChatMessage = dc.getDocument().toObject(ChatMessageDetails.class);
+                            for(ChatMessageDetails chatMessageDetails : chatMessageDetailsArrayList){
+                                if(chatMessageDetails.Uid.equals(deletedChatMessage.Uid) &&
+                                chatMessageDetails.date.equals(deletedChatMessage.date) &&
+                                chatMessageDetails.Message.equals(deletedChatMessage.Message)){
+                                    chatMessageDetailsArrayList.remove(i);
+                                    break;
+                                }else{
+                                    i++;
+                                }
+                            }
                             break;
                     }
                 }
-
                 mainAdapter.notifyDataSetChanged();
             }
         });
@@ -99,31 +131,77 @@ public class ChatRoomActivity extends AppCompatActivity {
         findViewById(R.id.SendMessageButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText enterMessageText = findViewById(R.id.enterMessageText);
+                enterMessageText = findViewById(R.id.enterMessageText);
                 if(checkValidations(enterMessageText)){
-                    //Once the profile is created in the firestore based on the UID then we can work on this part.
-                    // For now keeping it like this.
-                    final ChatMessageDetails chatMessageDetails = new ChatMessageDetails();
-                    chatMessageDetails.isLiked = false;
-                    chatMessageDetails.firstname = "";
-                    chatMessageDetails.Message = enterMessageText.getText().toString();
-                    chatMessageDetails.Uid = "";
-                    db.collection("ChatRoomMessages").document(chatRoomName).collection("Messages").document()
-                            .set(chatMessageDetails)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    Toast.makeText(ChatRoomActivity.this, "Message sent!", Toast.LENGTH_SHORT).show();
-//                                    chatMessageDetailsArrayList.add(chatMessageDetails);
-                                    mainAdapter.notifyDataSetChanged();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(ChatRoomActivity.this, "Some error occured. Please try again", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    //Profile is taken from the realtime database in the below code.
+                    mAuth=FirebaseAuth.getInstance();
+                    if(mAuth.getCurrentUser()!=null){
+                        showProgressBarDialog();
+                        mDatabase = FirebaseDatabase.getInstance().getReference("users");
+                        mDatabase.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                final DataSnapshot snap = snapshot;
+                                storage = FirebaseStorage.getInstance();
+                                storageReference = storage.getReference();
+                                final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getCurrentUser().getUid());
+
+                                //Setting up all the details of the user for the message
+                                user = new UserProfile(snap.child("firstName").getValue(String.class)
+                                        ,snap.child("lastName").getValue(String.class)
+                                        ,snap.child("gender").getValue(String.class)
+                                        ,snap.child("email").getValue(String.class)
+                                        ,snap.child("city").getValue(String.class)
+                                        ,snap.child("profileImage").getValue(String.class)
+                                        ,mAuth.getCurrentUser().getUid());
+
+                                //For getting the date
+                                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                                LocalDateTime now = LocalDateTime.now();
+
+                                //Loading everything into the ChatMessageDetails
+                                final ChatMessageDetails chatMessageDetails = new ChatMessageDetails();
+                                chatMessageDetails.firstname = user.firstName;
+                                chatMessageDetails.Message = enterMessageText.getText().toString();
+                                chatMessageDetails.Uid = mAuth.getUid();
+                                chatMessageDetails.date = dtf.format(now);
+                                chatMessageDetails.likedUsers = new ArrayList<>();
+                                chatMessageDetails.imageUrl = user.profileImage;
+
+                                //Document ID is now the user ID plus the message date. so that this can be used when updating the liked user field.
+                                String documentID = chatMessageDetails.Uid+""+chatMessageDetails.date;
+                                //Storing all the info along with the message in the firestore
+                                db.collection("ChatRoomList").document(chatRoomName).collection("Messages")
+                                        .document(documentID)
+                                        .set(chatMessageDetails)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+//                                                Toast.makeText(ChatRoomActivity.this, "Message sent!", Toast.LENGTH_SHORT).show();
+                                                Log.d("demo", chatMessageDetails.toString());
+                                                enterMessageText.setText("");
+                                                mainAdapter.notifyDataSetChanged();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(ChatRoomActivity.this, "Some error occured. Please try again", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                hideProgressBarDialog();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(ChatRoomActivity.this, "Cancelled Operation", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else{
+                        Toast.makeText(ChatRoomActivity.this, "User Not Logged In", Toast.LENGTH_SHORT).show();
+                        Log.d("demo","User not logged in");
+                    }
                 }else{
+                    //The message string is empty!
                     Toast.makeText(ChatRoomActivity.this, "Message cannot be empty!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -139,5 +217,78 @@ public class ChatRoomActivity extends AppCompatActivity {
         }else{
             return true;
         }
+    }
+
+    //for showing the progress dialog
+    public void showProgressBarDialog()
+    {
+        progressDialog = new ProgressDialog(ChatRoomActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    //for hiding the progress dialog
+    public void hideProgressBarDialog()
+    {
+        progressDialog.dismiss();
+    }
+
+    @Override
+    public void getDetails(ChatMessageDetails chatMessageDetails) {
+        String documentID = chatMessageDetails.Uid+""+chatMessageDetails.date;
+        db.collection("ChatRoomList").document(chatRoomName).collection("Messages")
+                .document(documentID)
+                .update("likedUsers",chatMessageDetails.likedUsers)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+//                        Toast.makeText(ChatRoomActivity.this, "Message liked!", Toast.LENGTH_SHORT).show();
+                        mainAdapter.notifyDataSetChanged();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ChatRoomActivity.this, "Some error occured. Please try again", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void getItemPosition(int position, final ChatMessageDetails chatMessageDetails) {
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(ChatRoomActivity.this);
+        builder1.setMessage("Are you sure you want to delete this message?");
+        builder1.setPositiveButton(
+                "Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String documentID = chatMessageDetails.Uid+""+chatMessageDetails.date;
+                        db.collection("ChatRoomList").document(chatRoomName).collection("Messages")
+                                .document(documentID)
+                                .delete()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        Toast.makeText(ChatRoomActivity.this, "Message Deleted Successfully!", Toast.LENGTH_SHORT).show();
+                                        mainAdapter.notifyDataSetChanged();
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(ChatRoomActivity.this, "Some error occured. Please try again", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+
+        builder1.setNegativeButton(
+                "No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
     }
 }

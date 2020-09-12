@@ -1,52 +1,62 @@
 package com.helloworld.myapplication;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class ChatMessageDetails {
     String Uid;
     String firstname;
     String Message;
-    Date date;
-    boolean isLiked;
+    String date;
+    ArrayList<String> likedUsers = new ArrayList<>();
+    String imageUrl;
 
     public String getUid() {
         return Uid;
-    }
-
-    public String getFirstname() {
-        return firstname;
-    }
-
-    public String getMessage() {
-        return Message;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public boolean isLiked() {
-        return isLiked;
     }
 
     public void setUid(String uid) {
         Uid = uid;
     }
 
+    public String getFirstname() {
+        return firstname;
+    }
+
     public void setFirstname(String firstname) {
         this.firstname = firstname;
+    }
+
+    public String getMessage() {
+        return Message;
     }
 
     public void setMessage(String message) {
         Message = message;
     }
 
-    public void setDate(Date date) {
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public void setLiked(boolean liked) {
-        isLiked = liked;
+    public ArrayList<String> getLikedUsers() {
+        return likedUsers;
+    }
+
+    public void setLikedUsers(ArrayList<String> likedUsers) {
+        this.likedUsers = likedUsers;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
@@ -55,8 +65,9 @@ public class ChatMessageDetails {
                 "Uid='" + Uid + '\'' +
                 ", firstname='" + firstname + '\'' +
                 ", Message='" + Message + '\'' +
-                ", date=" + date +
-                ", isLiked=" + isLiked +
+                ", date='" + date + '\'' +
+                ", likedUsers=" + likedUsers +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }
