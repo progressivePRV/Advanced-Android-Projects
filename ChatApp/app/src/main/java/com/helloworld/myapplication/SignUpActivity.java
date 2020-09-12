@@ -148,7 +148,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                     dbUser.put("gender",gender.getText().toString().trim());
                                                     dbUser.put("email",email.getText().toString().trim());
                                                     dbUser.put("city",city.getText().toString().trim());
-                                                    dbUser.put("profileImage",profileImageRef.getDownloadUrl()); //.getPath());
+                                                    dbUser.put("profileImage",profileImageRef.getPath());
                                                     //insert user info in database
                                                     mDatabase.child(user.getUid()).setValue(dbUser).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<Void>() {
                                                         @Override
