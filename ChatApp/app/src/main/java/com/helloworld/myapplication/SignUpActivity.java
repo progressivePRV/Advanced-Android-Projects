@@ -44,6 +44,7 @@ import java.util.HashMap;
 
 
 public class SignUpActivity extends AppCompatActivity {
+    private static final String TAG = "okay";
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
     private ImageView imageView;
@@ -122,65 +123,47 @@ public class SignUpActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             // Sign in success, update UI with the signed-in user's information
                                             //Create signed up user
+
                                             final FirebaseUser user = mAuth.getCurrentUser();
 
-                                            //store profile image of firebase file storage
-                                            storage = FirebaseStorage.getInstance();
-                                            storageReference = storage.getReference();
-
-                                            final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getUid());
-
-                                            imageView.setDrawingCacheEnabled(true);
-                                            imageView.buildDrawingCache();
-                                            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-                                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                                            byte[] imageData = outputStream.toByteArray();
-
-                                            profileImageRef.putBytes(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                            mDatabase = FirebaseDatabase.getInstance().getReference("users");
+                                            HashMap dbUser = new HashMap<>();
+                                            dbUser.put("firstName",fname.getText().toString().trim());
+                                            dbUser.put("lastName",lname.getText().toString().trim());
+                                            dbUser.put("gender",gender.getText().toString().trim());
+                                            dbUser.put("email",email.getText().toString().trim());
+                                            dbUser.put("city",city.getText().toString().trim());
+                                            dbUser.put("profileImage","");
+                                            //insert user info in database
+                                            mDatabase.child(user.getUid()).setValue(dbUser).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<Void>() {
                                                 @Override
-                                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                                                    mDatabase = FirebaseDatabase.getInstance().getReference("users");
-                                                    HashMap dbUser = new HashMap<>();
-                                                    dbUser.put("firstName",fname.getText().toString().trim());
-                                                    dbUser.put("lastName",lname.getText().toString().trim());
-                                                    dbUser.put("gender",gender.getText().toString().trim());
-                                                    dbUser.put("email",email.getText().toString().trim());
-                                                    dbUser.put("city",city.getText().toString().trim());
-                                                    dbUser.put("profileImage",profileImageRef.getPath());
-                                                    //insert user info in database
-                                                    mDatabase.child(user.getUid()).setValue(dbUser).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            if(task.isSuccessful()){
-                                                                Log.d("demo", "createUserWithEmail:success");
-                                                                Toast.makeText(SignUpActivity.this, "Signed Up Sucessfully!", Toast.LENGTH_LONG).show();
-                                                                hideProgressBarDialog();
-                                                                Intent intent = new Intent(SignUpActivity.this, ChatRoomActivity.class);
-                                                                //sending userid to the next activity and based on user id we can fetch the data from the firebase.
-                                                                intent.putExtra("user", user.getUid());
-                                                                startActivityForResult(intent, 1000);
-                                                            }
-                                                            else{
-                                                                profileImageRef.delete();
-                                                                user.delete();
-                                                                mAuth.signOut();
-                                                                hideProgressBarDialog();
-                                                                Toast.makeText(SignUpActivity.this, "Sign Up Failed", Toast.LENGTH_LONG).show();
-                                                            }
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if(task.isSuccessful()){
+                                                        Log.d("demo", "createUserWithEmail:success");
+                                                        Toast.makeText(SignUpActivity.this, "Signed Up Sucessfully!", Toast.LENGTH_LONG).show();
+                                                        hideProgressBarDialog();
+                                                        Intent intent = new Intent(SignUpActivity.this,SidebarActivity.class);
+                                                        //sending userid to the next activity and based on user id we can fetch the data from the firebase.
+                                                        intent.putExtra("user", user.getUid());
+                                                        Log.d(TAG, "onComplete: before start intent");
+                                                        startActivityForResult(intent, 1000);
+                                                        Log.d(TAG, "onComplete: after start intent");
+                                                        //start uploading the image
+                                                        if(isProfileImageSet){
+                                                            uploadImage();    
+                                                        }else{
+                                                            Log.d(TAG, "onComplete: going without seting image");
                                                         }
-                                                    });
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    user.delete();
-                                                    mAuth.signOut();
-                                                    hideProgressBarDialog();
-                                                    Toast.makeText(SignUpActivity.this, "Profile picture could not be uploaded", Toast.LENGTH_SHORT).show();
+                                                        
+                                                    }
+                                                    else{
+                                                        hideProgressBarDialog();
+                                                        Toast.makeText(SignUpActivity.this, "Sign Up Failed", Toast.LENGTH_LONG).show();
+                                                    }
                                                 }
                                             });
+
+                                            //uptill here
 
                                         } else {
                                             // If sign in fails, display a message to the user.
@@ -292,5 +275,64 @@ public class SignUpActivity extends AppCompatActivity {
         }else{
             return true;
         }
+    }
+
+    public void uploadImage(){
+        //store profile image of firebase file storage
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
+        final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getUid());
+
+        imageView.setDrawingCacheEnabled(true);
+        imageView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+        byte[] imageData = outputStream.toByteArray();
+
+        profileImageRef.putBytes(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d(TAG, "onSuccess: image upload successful");
+
+
+                //call to get  downloadable url
+                profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+
+                        //call setDownloadable url in realtime database
+                        setDownlaodUrl(uri.toString());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "onFailure: can't get download url");
+                        Toast.makeText(SignUpActivity.this, "Profile picture could not be set, you can try it in in edit profile", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "onFailure: can't upload the image");
+                Toast.makeText(SignUpActivity.this, "Profile picture could not be set, you can try it in in edit profile", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void setDownlaodUrl(String url){
+                mDatabase.child(mAuth.getUid()).child("profileImage").setValue(url).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            Log.d(TAG, "onComplete: done writing image url to realtime database");
+                        }else{
+                            Log.d(TAG, "onComplete: cannot write realtime data base for image url");
+                        }
+                    }
+                });
     }
 }
