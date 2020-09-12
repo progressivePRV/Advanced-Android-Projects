@@ -50,6 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
     private ImageView imageView;
     private DatabaseReference mDatabase;
     FirebaseStorage storage;
+    String username ="";
     StorageReference storageReference;
     boolean isProfileImageSet=false;
 
@@ -134,25 +135,16 @@ public class SignUpActivity extends AppCompatActivity {
                                             dbUser.put("email",email.getText().toString().trim());
                                             dbUser.put("city",city.getText().toString().trim());
                                             dbUser.put("profileImage","");
+                                            username = fname.getText().toString().trim()+ " " +lname.getText().toString().trim();
                                             //insert user info in database
                                             mDatabase.child(user.getUid()).setValue(dbUser).addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<Void>() {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if(task.isSuccessful()){
                                                         Log.d("demo", "createUserWithEmail:success");
-                                                        Toast.makeText(SignUpActivity.this, "Signed Up Sucessfully!", Toast.LENGTH_LONG).show();
-                                                        hideProgressBarDialog();
-                                                        Intent intent = new Intent(SignUpActivity.this,SidebarActivity.class);
-                                                        //sending userid to the next activity and based on user id we can fetch the data from the firebase.
-                                                        intent.putExtra("user", user.getUid());
-                                                        Log.d(TAG, "onComplete: before start intent");
-                                                        startActivityForResult(intent, 1000);
-                                                        Log.d(TAG, "onComplete: after start intent");
                                                         //start uploading the image
                                                         if(isProfileImageSet){
                                                             uploadImage();    
-                                                        }else{
-                                                            Log.d(TAG, "onComplete: going without seting image");
                                                         }
                                                         
                                                     }
@@ -323,7 +315,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    public void setDownlaodUrl(String url){
+    public void setDownlaodUrl(final String url){
                 mDatabase.child(mAuth.getUid()).child("profileImage").setValue(url).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -332,6 +324,15 @@ public class SignUpActivity extends AppCompatActivity {
                         }else{
                             Log.d(TAG, "onComplete: cannot write realtime data base for image url");
                         }
+                        Toast.makeText(SignUpActivity.this, "Signed Up Sucessfully!", Toast.LENGTH_LONG).show();
+                        hideProgressBarDialog();
+                        Intent intent = new Intent(SignUpActivity.this,SidebarActivity.class);
+                        //sending userid to the next activity and based on user id we can fetch the data from the firebase.
+                        intent.putExtra("user",mAuth.getUid());
+
+                        Log.d(TAG, "onComplete: before start intent");
+                        startActivityForResult(intent, 1000);
+                        Log.d(TAG, "onComplete: after start intent");
                     }
                 });
     }
