@@ -7,16 +7,26 @@
     android:paddingTop="0dp"
     tools:context=".EditProfileActivity">
 
-    <ImageView
-        android:id="@+id/editProfileImage"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/view2"
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:layout_centerHorizontal="true"
+        app:cardBackgroundColor="@color/cardview_dark_background"
+        app:cardCornerRadius="80dp"
         android:layout_marginTop="82dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/editProfileImage"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            app:srcCompat="@drawable/ic_launcher_background" />
+
+    </androidx.cardview.widget.CardView>
 
     <EditText
         android:id="@+id/editFirstName"
@@ -28,7 +38,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editProfileImage" />
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
 
     <EditText
         android:id="@+id/editlastName"

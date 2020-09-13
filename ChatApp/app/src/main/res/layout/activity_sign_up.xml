@@ -31,7 +31,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:autofillHints="@string/AutoFillHint"
         android:ems="10"
@@ -40,7 +40,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton" />
+        app:layout_constraintTop_toBottomOf="@+id/view2" />
 
     <EditText
         android:id="@+id/editTextLname"
@@ -124,17 +124,28 @@
         app:layout_constraintStart_toEndOf="@+id/view"
         app:layout_constraintTop_toBottomOf="@+id/editTextRepeatPassword" />
 
-    <ImageView
-        android:id="@+id/imageButton"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/view2"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_centerHorizontal="true"
+        app:cardBackgroundColor="@color/cardview_dark_background"
+        app:cardCornerRadius="80dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="64dp"
         android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <ImageView
+        android:id="@+id/imageButton"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+
         tools:srcCompat="@tools:sample/avatars" />
+
+    </androidx.cardview.widget.CardView>
 
     <EditText
         android:id="@+id/editTextGender"
