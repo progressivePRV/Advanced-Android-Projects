@@ -58,6 +58,28 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
     private EditText enterMessageText;
     private ProgressDialog progressDialog;
 
+    //For deleting the users from the current user list of the chatroom
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        mAuth=FirebaseAuth.getInstance();
+        db.collection("ChatRoomList").document(chatRoomName).collection("CurrentViewers")
+                .document(mAuth.getUid())
+                .delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+//                        Toast.makeText(ChatRoomActivity.this, "!", Toast.LENGTH_SHORT).show();
+                        mainAdapter.notifyDataSetChanged();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ChatRoomActivity.this, "Some error occured. Please press the back button again!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -217,6 +239,8 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                 startActivity(intent);
             }
         });
+
+
     }
 
     //For checking the empty strings
