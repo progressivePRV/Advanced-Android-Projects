@@ -4,26 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
+    android:paddingTop="0dp"
     tools:context=".EditProfileActivity">
 
     <ImageView
         android:id="@+id/editProfileImage"
         android:layout_width="110dp"
         android:layout_height="110dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="82dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.04"
         app:srcCompat="@drawable/ic_launcher_background" />
 
     <EditText
         android:id="@+id/editFirstName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_margin="25dp"
         android:ems="10"
         android:hint="@string/firstname"
         android:inputType="textPersonName"
@@ -35,7 +34,7 @@
         android:id="@+id/editlastName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="25dp"
         android:ems="10"
         android:hint="@string/lastname"
         android:inputType="textPersonName"
@@ -48,7 +47,7 @@
         android:id="@+id/editGender"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="25dp"
         android:ems="10"
         android:hint="@string/gender"
         android:inputType="textPersonName"
@@ -61,7 +60,7 @@
         android:id="@+id/editCity"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_margin="25dp"
         android:ems="10"
         android:hint="@string/city"
         android:inputType="textPersonName"
@@ -105,5 +104,16 @@
         app:layout_constraintStart_toEndOf="@+id/view3"
         app:layout_constraintTop_toBottomOf="@+id/editCity"
         app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_in_editProfile"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

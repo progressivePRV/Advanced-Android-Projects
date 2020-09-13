@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,13 +37,6 @@ import com.squareup.picasso.Picasso;
  * create an instance of this fragment.
  */
 public class frag_profile extends Fragment {
-
-    FirebaseAuth mAuth;
-    DatabaseReference mDatabase;
-    FirebaseStorage storage;
-    StorageReference storageReference;
-    UserProfile user;
-    private ProgressDialog progressDialog;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,6 +69,13 @@ public class frag_profile extends Fragment {
         return fragment;
     }
 
+    FirebaseAuth mAuth;
+    DatabaseReference mDatabase;
+    UserProfile u;
+    private ProgressDialog progressDialog;
+    Button editProfileBtn;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,11 +85,16 @@ public class frag_profile extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        editProfileBtn =  view.findViewById(R.id.buttoneditProfile);
+        editProfileBtn.setClickable(false);
+        mAuth = FirebaseAuth.getInstance();
 
         final TextView textViewFirstName = view.findViewById(R.id.textViewFirstName);
         final TextView textViewLastName = view.findViewById(R.id.textViewLastName);
@@ -97,16 +103,14 @@ public class frag_profile extends Fragment {
         final TextView textViewCity = view.findViewById(R.id.textViewCity);
         final ImageView profileImage = view.findViewById(R.id.imageViewProfileImage);
 
-        mAuth=FirebaseAuth.getInstance();
-        
-        if(mAuth.getCurrentUser()!=null){
             showProgressBarDialog();
             mDatabase = FirebaseDatabase.getInstance().getReference("users");
             mDatabase.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                    User u = snapshot.getValue(User.class);
+                    u = snapshot.getValue(UserProfile.class);
+                    u.uid = snapshot.getKey();
                     Picasso.get().load(u.profileImage).into(profileImage);
                     textViewFirstName.setText(u.firstName);
                     textViewLastName.setText(u.lastName);
@@ -114,35 +118,7 @@ public class frag_profile extends Fragment {
                     textViewEmail.setText(u.email);
                     textViewCity.setText(u.city);
                     hideProgressBarDialog();
-
-
-//                    final DataSnapshot snap = snapshot;
-//
-//                    storage = FirebaseStorage.getInstance();
-//                    storageReference = storage.getReference();
-//
-//                    final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getCurrentUser().getUid());
-//
-//                    profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//                            Picasso.get().load(uri.toString()).into(profileImage);
-//                            user = new UserProfile(snap.child("firstName").getValue(String.class),snap.child("lastName").getValue(String.class),snap.child("gender").getValue(String.class),snap.child("email").getValue(String.class),snap.child("city").getValue(String.class),snap.child("profileImage").getValue(String.class),mAuth.getCurrentUser().getUid());
-//
-//                            textViewFirstName.setText(user.firstName);
-//                            textViewLastName.setText(user.lastName);
-//                            textViewGender.setText(user.gender);
-//                            textViewEmail.setText(user.email);
-//                            textViewCity.setText(user.city);
-//                            hideProgressBarDialog();
-//                        }
-//                    }).addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            hideProgressBarDialog();
-//                            Toast.makeText(getContext(), "Failed to Load Profile", Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
+                    editProfileBtn.setClickable(true);
                 }
 
                 @Override
@@ -152,24 +128,15 @@ public class frag_profile extends Fragment {
                     Toast.makeText(getContext(), "Failed to Load Profile", Toast.LENGTH_SHORT).show();
                 }
             });
-        }
-        else{
-            Toast.makeText(getContext(), "User Not Logged In", Toast.LENGTH_SHORT).show();
-            Log.d("demo","User not logged in");
-        }
 
         view.findViewById(R.id.buttoneditProfile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(user!=null){
+
                     Intent editProfileIntent = new Intent(getContext(),EditProfileActivity.class);
-                    editProfileIntent.putExtra("user",user);
+                    editProfileIntent.putExtra("user",u);
                     startActivity(editProfileIntent);
-                }
-                else{
-                    Log.d("demo","No user present");
-                    Toast.makeText(getContext(), "No user present", Toast.LENGTH_SHORT).show();
-                }
+
             }
         });
 

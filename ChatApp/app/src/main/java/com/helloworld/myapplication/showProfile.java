@@ -3,6 +3,7 @@ package com.helloworld.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ public class showProfile extends AppCompatActivity {
         setContentView(R.layout.activity_show_profile);
 
         Toolbar t = findViewById(R.id.toolbar_in_showProfile);
+        t.setTitleTextColor(Color.WHITE);
         setSupportActionBar(t);
         setTitle("User Profle");
 
