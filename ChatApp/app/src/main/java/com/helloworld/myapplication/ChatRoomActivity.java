@@ -337,7 +337,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        finish();
         return super.onSupportNavigateUp();
     }
 }

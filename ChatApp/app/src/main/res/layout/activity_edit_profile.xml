@@ -7,6 +7,10 @@
     android:paddingTop="0dp"
     tools:context=".EditProfileActivity">
 
+    <include layout="@layout/toolbar_for_sidebar">
+
+    </include>
+
     <androidx.cardview.widget.CardView
         android:id="@+id/view2"
         android:layout_width="130dp"
@@ -126,15 +130,6 @@
         app:layout_constraintTop_toBottomOf="@+id/editCity"
         app:layout_constraintVertical_bias="0.0" />
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_in_editProfile"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
