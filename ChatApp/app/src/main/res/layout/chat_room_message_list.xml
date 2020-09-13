@@ -1,104 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/border">
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    card_view:cardCornerRadius="2dp"
+    card_view:cardElevation="2dp"
+    card_view:cardUseCompatPadding="true">
 
-    <ImageView
-        android:id="@+id/ProfileImageChatRoom"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/ChatRoomUserName"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/newMessageConstraintLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/ProfileImageChatRoom"
-        app:layout_constraintStart_toEndOf="@+id/ProfileImageChatRoom"
-        app:layout_constraintTop_toTopOf="@+id/ProfileImageChatRoom" />
-
-    <TextView
-        android:id="@+id/chatRoomMessage"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="8dp"
-        android:textColor="#000000"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ProfileImageChatRoom" />
-
-    <TextView
-        android:id="@+id/chatRoomMessageDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="2dp"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chatRoomMessage" />
-
-    <ImageButton
-        android:id="@+id/ButtonMessageFavorites"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginBottom="5dp"
         android:background="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="@+id/chatRoomMessageDate"
-        app:layout_constraintEnd_toEndOf="@+id/ButtonMessageFavouriteON"
-        app:layout_constraintTop_toTopOf="@+id/chatRoomMessageDate"
-        app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
+        android:padding="5dp">
 
-    <ImageButton
-        android:id="@+id/ButtonMessageDelete"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginEnd="5dp"
-        android:background="#FFFFFF"
-        android:backgroundTint="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="@+id/chatRoomMessageDate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/chatRoomMessageDate"
-        app:srcCompat="@drawable/ic_baseline_delete_24" />
+        <ImageView
+            android:id="@+id/ProfileImageChatRoom"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
 
-    <ImageButton
-        android:id="@+id/ButtonMessageFavouriteON"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginEnd="5dp"
-        android:background="#FFFFFF"
-        android:backgroundTint="#FFFFFF"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/chatRoomMessageDate"
-        app:layout_constraintEnd_toStartOf="@+id/NumberOfLikes"
-        app:layout_constraintTop_toTopOf="@+id/chatRoomMessageDate"
-        app:srcCompat="@drawable/ic_baseline_favorite_24" />
+        <TextView
+            android:id="@+id/ChatRoomUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/ProfileImageChatRoom"
+            app:layout_constraintStart_toEndOf="@+id/ProfileImageChatRoom"
+            app:layout_constraintTop_toTopOf="@+id/ProfileImageChatRoom" />
 
-    <TextView
-        android:id="@+id/NumberOfLikes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/chatRoomMessageDate"
-        app:layout_constraintEnd_toStartOf="@+id/ButtonMessageDelete"
-        app:layout_constraintTop_toTopOf="@+id/chatRoomMessageDate" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/chatRoomMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="#000000"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ProfileImageChatRoom" />
+
+        <TextView
+            android:id="@+id/chatRoomMessageDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="2dp"
+            android:textColor="#000000"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chatRoomMessage" />
+
+        <ImageButton
+            android:id="@+id/ButtonMessageFavorites"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginBottom="5dp"
+            android:background="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/chatRoomMessageDate"
+            app:layout_constraintEnd_toEndOf="@+id/ButtonMessageFavouriteON"
+            app:layout_constraintTop_toTopOf="@+id/chatRoomMessageDate"
+            app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
+
+        <ImageButton
+            android:id="@+id/ButtonMessageDelete"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="5dp"
+            android:background="#FFFFFF"
+            android:backgroundTint="#FFFFFF"
+            app:layout_constraintBottom_toBottomOf="@+id/chatRoomMessageDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/chatRoomMessageDate"
+            app:srcCompat="@drawable/ic_baseline_delete_24" />
+
+        <ImageButton
+            android:id="@+id/ButtonMessageFavouriteON"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="5dp"
+            android:background="#FFFFFF"
+            android:backgroundTint="#FFFFFF"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/chatRoomMessageDate"
+            app:layout_constraintEnd_toStartOf="@+id/NumberOfLikes"
+            app:layout_constraintTop_toTopOf="@+id/chatRoomMessageDate"
+            app:srcCompat="@drawable/ic_baseline_favorite_24" />
+
+        <TextView
+            android:id="@+id/NumberOfLikes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/chatRoomMessageDate"
+            app:layout_constraintEnd_toStartOf="@+id/ButtonMessageDelete"
+            app:layout_constraintTop_toTopOf="@+id/chatRoomMessageDate" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
