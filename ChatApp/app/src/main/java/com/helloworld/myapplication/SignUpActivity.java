@@ -3,6 +3,7 @@ package com.helloworld.myapplication;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -58,7 +60,13 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        setTitle("Chat Room SignUp");
+
+        Toolbar t = findViewById(R.id.toolbar_for_sidebar);
+        t.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(t);
+        setTitle("Sign Up");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //For profile pic selection either from Camera or from Gallery
         imageView = findViewById(R.id.imageButton);
@@ -335,5 +343,18 @@ public class SignUpActivity extends AppCompatActivity {
                         Log.d(TAG, "onComplete: after start intent");
                     }
                 });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent loginIntent = new Intent(SignUpActivity.this,MainActivity.class);
+        startActivity(loginIntent);
+        super.onBackPressed();
     }
 }

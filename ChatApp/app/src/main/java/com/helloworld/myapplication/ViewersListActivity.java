@@ -41,10 +41,11 @@ public class ViewersListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewers_list);
 
-        Toolbar t = findViewById(R.id.toolbar_in_ViewerList);
+        Toolbar t = findViewById(R.id.toolbar_for_sidebar);
         t.setTitleTextColor(Color.WHITE);
         setSupportActionBar(t);
         setTitle("Current Viewers");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mainRecyclerView = (RecyclerView) findViewById(R.id.viewersListRecyclerView);
         mainLayoutManager = new LinearLayoutManager(ViewersListActivity.this);
@@ -92,5 +93,11 @@ public class ViewersListActivity extends AppCompatActivity {
                 mainAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

@@ -18,10 +18,12 @@ public class showProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_profile);
 
-        Toolbar t = findViewById(R.id.toolbar_in_showProfile);
+        Toolbar t = findViewById(R.id.toolbar_for_sidebar);
         t.setTitleTextColor(Color.WHITE);
         setSupportActionBar(t);
         setTitle("User Profle");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         final TextView textViewFirstName = findViewById(R.id.textViewFirstName);
         final TextView textViewLastName = findViewById(R.id.textViewLastName);
@@ -37,5 +39,11 @@ public class showProfile extends AppCompatActivity {
         textViewGender.setText(u.gender);
         textViewEmail.setText(u.email);
         textViewCity.setText(u.city);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }

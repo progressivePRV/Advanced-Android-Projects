@@ -89,10 +89,11 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
 
         chatRoomName = getIntent().getExtras().getString("chatRoomName");
 
-        Toolbar t = findViewById(R.id.toolbar_in_ViewerList);
+        Toolbar t = findViewById(R.id.toolbar_for_sidebar);
         t.setTitleTextColor(Color.WHITE);
         setSupportActionBar(t);
-        setTitle("chatRoomName");
+        setTitle(chatRoomName);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //setTitle("Welcome to Chat Room");
 
         //temporary code for logout. Please remove while actual implementation
@@ -332,5 +333,11 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                 });
         AlertDialog alert11 = builder1.create();
         alert11.show();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return super.onSupportNavigateUp();
     }
 }
