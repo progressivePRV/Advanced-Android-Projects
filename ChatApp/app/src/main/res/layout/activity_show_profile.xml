@@ -7,7 +7,10 @@
     tools:context=".showProfile"
     android:theme="@style/menu_item_size">
 
-    <include layout="@layout/toolbar_for_sidebar">
+    <include
+        layout="@layout/toolbar_for_sidebar"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
     </include>
 
@@ -23,42 +26,41 @@
         tools:src="@drawable/ic_launcher_background" />
 
     <TextView
-        android:id="@+id/textViewFirstNameLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/firstNameLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewProfileImage" />
-
-    <TextView
         android:id="@+id/textViewLastNameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="16dp"
         android:text="@string/lastNameLabel"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewFirstNameLabel" />
 
     <TextView
-        android:id="@+id/textViewGenderLabel"
-        android:layout_width="wrap_content"
+        android:id="@+id/textViewFirstNameLabel"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/genderLabel"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/firstNameLabel"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewLastNameLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewProfileImage" />
 
     <TextView
         android:id="@+id/textViewEmailLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="16dp"
         android:text="@string/emailLabel"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewGenderLabel" />
 
@@ -66,13 +68,29 @@
         android:id="@+id/textViewCityLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:text="@string/cityLabel"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.074"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewEmailLabel" />
+
+    <TextView
+        android:id="@+id/textViewGenderLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/genderLabel"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewLastNameLabel" />
 
     <TextView
         android:id="@+id/textViewFirstName"
@@ -80,6 +98,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/view_ref_inShowProfile"
         app:layout_constraintTop_toBottomOf="@+id/imageViewProfileImage" />
 
@@ -89,6 +110,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:shadowColor="#000000"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/view_ref_inShowProfile"
         app:layout_constraintTop_toBottomOf="@+id/textViewFirstName" />
 
@@ -98,6 +123,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:shadowColor="#000000"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/view_ref_inShowProfile"
         app:layout_constraintTop_toBottomOf="@+id/textViewLastName" />
 
@@ -107,6 +136,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:shadowColor="#000000"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/view_ref_inShowProfile"
         app:layout_constraintTop_toBottomOf="@+id/textViewGender" />
 
@@ -116,16 +149,20 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:shadowColor="#000000"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/view_ref_inShowProfile"
         app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
-
 
 
     <View
         android:id="@+id/view_ref_inShowProfile"
         android:layout_width="1dp"
         android:layout_height="247dp"
-        android:layout_marginStart="34dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintStart_toEndOf="@+id/textViewFirstNameLabel"
         app:layout_constraintTop_toBottomOf="@+id/imageViewProfileImage" />
 

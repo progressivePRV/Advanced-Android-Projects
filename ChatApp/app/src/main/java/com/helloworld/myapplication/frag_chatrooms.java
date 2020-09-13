@@ -113,7 +113,7 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ImageButton chatRoomAdd = getView().findViewById(R.id.ButtonChatRoomAdd);
+        Button chatRoomAdd = getView().findViewById(R.id.ButtonChatRoomAdd);
         chatRoomAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
