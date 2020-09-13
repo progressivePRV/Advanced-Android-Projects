@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Callback;
@@ -32,8 +33,9 @@ public class rvAdapterForUsersList extends RecyclerView.Adapter<rvAdapterForUser
     @NonNull
     @Override
     public rvAdapterForUsersList.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LinearLayout ll = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_for_users_list,parent,false);
-        ViewHolder view = new ViewHolder(ll);
+        ConstraintLayout cl = (ConstraintLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_for_users_list,parent,false);
+//        LinearLayout ll = (LinearLayout)
+        ViewHolder view = new ViewHolder(cl);
         return view;
     }
 
@@ -59,7 +61,7 @@ public class rvAdapterForUsersList extends RecyclerView.Adapter<rvAdapterForUser
             });
         }
 
-        holder.ll.setOnClickListener(new View.OnClickListener() {
+        holder.cl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 interact.seeUserProfile(users.get(position));
@@ -75,10 +77,10 @@ public class rvAdapterForUsersList extends RecyclerView.Adapter<rvAdapterForUser
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvUserName;
         ImageView ivProfileImage;
-        LinearLayout ll;
+        ConstraintLayout cl;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ll = itemView.findViewById(R.id.ll_for_userslist);
+            cl = itemView.findViewById(R.id.cl_for_userslist);
             tvUserName = itemView.findViewById(R.id.username_for_userslist);
             ivProfileImage = itemView.findViewById(R.id.profileImg_for_userslist);
         }

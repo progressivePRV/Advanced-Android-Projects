@@ -3,9 +3,11 @@ package com.helloworld.myapplication;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -38,6 +40,11 @@ public class ViewersListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viewers_list);
+
+        Toolbar t = findViewById(R.id.toolbar_in_ViewerList);
+        t.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(t);
+        setTitle("Current Viewers");
 
         mainRecyclerView = (RecyclerView) findViewById(R.id.viewersListRecyclerView);
         mainLayoutManager = new LinearLayoutManager(ViewersListActivity.this);

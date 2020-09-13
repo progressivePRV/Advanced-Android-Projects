@@ -3,6 +3,7 @@ package com.helloworld.myapplication;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,6 +11,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -85,7 +87,13 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
-        setTitle("Welcome to Chat Room");
+        chatRoomName = getIntent().getExtras().getString("chatRoomName");
+
+        Toolbar t = findViewById(R.id.toolbar_in_ViewerList);
+        t.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(t);
+        setTitle("chatRoomName");
+        //setTitle("Welcome to Chat Room");
 
         //temporary code for logout. Please remove while actual implementation
 //        findViewById(R.id.buttonLogout).setOnClickListener(new View.OnClickListener() {
@@ -98,7 +106,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
 //            }
 //        });
         db = FirebaseFirestore.getInstance();
-        chatRoomName = getIntent().getExtras().getString("chatRoomName");
+
 
         //Adding snapshot listener to the firestore
         db.collection("ChatRoomList").document(chatRoomName).collection("Messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
