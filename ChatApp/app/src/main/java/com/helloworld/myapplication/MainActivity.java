@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Toolbar t = findViewById(R.id.toolbar_in_main);
+        t.setTitleTextColor(Color.WHITE);
         setSupportActionBar(t);
         setTitle("Chat Room Login");
 

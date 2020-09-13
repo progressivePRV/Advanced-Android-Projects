@@ -6,8 +6,8 @@
     <string name="password">Password</string>
     <string name="firstname">First Name</string>
     <string name="lastname">Last Name</string>
-    <string name="choose_password">Choose Password</string>
-    <string name="repeat">Repeat Password</string>
+    <string name="choose_password">Password</string>
+    <string name="repeat">Confirm Password</string>
     <string name="AutoFillHint" />
     <string name="cancel">Cancel</string>
     <string name="gender">Gender</string>

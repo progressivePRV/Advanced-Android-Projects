@@ -6,21 +6,18 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_chatrooms"
-            android:icon="@android:drawable/ic_menu_mapmode"
             android:title="@string/menu_chatrooms" />
+        <!--  android:icon="@android:drawable/ic_menu_mapmode" -->
         <item
             android:id="@+id/nav_users"
-            android:icon="@android:drawable/ic_menu_myplaces"
-            android:title="@string/menu_users" />
+          android:title="@string/menu_users" />
 
-        <item
-            android:id="@+id/nav_myprofile"
-            android:icon="@drawable/ic_launcher_background"
-            android:title="@string/menu_myprofile" />
+      <item
+          android:id="@+id/nav_myprofile"
+          android:title="@string/menu_myprofile" />
 
-        <item
-            android:id="@+id/nav_logout"
-            android:icon="@android:drawable/btn_dialog"
-            android:title="@string/menu_logout" />
-    </group>
+      <item
+          android:id="@+id/nav_logout"
+          android:title="@string/menu_logout" />
+  </group>
 </menu>

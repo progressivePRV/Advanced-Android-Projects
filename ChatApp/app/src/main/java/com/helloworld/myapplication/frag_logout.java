@@ -66,6 +66,7 @@ public class frag_logout extends Fragment {
         mAuth.signOut();
         Intent loginIntent = new Intent(getContext(),MainActivity.class);
         startActivity(loginIntent);
+        getActivity().finish();
         return inflater.inflate(R.layout.fragment_logout, container, false);
     }
 }
