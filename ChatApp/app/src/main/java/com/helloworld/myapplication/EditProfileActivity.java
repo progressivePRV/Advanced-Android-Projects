@@ -59,10 +59,11 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
         setTitle("Edit User Profile");
 
-        Toolbar t = findViewById(R.id.toolbar_in_editProfile);
+        Toolbar t = findViewById(R.id.toolbar_for_sidebar);
         t.setTitleTextColor(Color.WHITE);
         setSupportActionBar(t);
-        setTitle("Edit Profle");
+        setTitle("Edit Profile");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         showProgressBarDialog("Loading...");
@@ -284,5 +285,11 @@ public class EditProfileActivity extends AppCompatActivity {
         } else {
             return true;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
     }
 }
