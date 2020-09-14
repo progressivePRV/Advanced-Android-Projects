@@ -109,6 +109,14 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
 //        });
         db = FirebaseFirestore.getInstance();
 
+        mainRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewChatRoomMessages);
+        mainLayoutManager = new LinearLayoutManager(ChatRoomActivity.this);
+        mainRecyclerView.setLayoutManager(mainLayoutManager);
+
+        mainAdapter = new ChatMessageAdapter(chatMessageDetailsArrayList, ChatRoomActivity.this);
+        mainRecyclerView.setAdapter(mainAdapter);
+
+
 
         //Adding snapshot listener to the firestore
         db.collection("ChatRoomList").document(chatRoomName).collection("Messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -126,6 +134,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                             Log.d("TAG", "New Msg: " + dc.getDocument().toObject(ChatMessageDetails.class));
                             ChatMessageDetails added = dc.getDocument().toObject(ChatMessageDetails.class);
                             chatMessageDetailsArrayList.add(dc.getDocument().toObject(ChatMessageDetails.class));
+
                             break;
                         case MODIFIED:
                             //There is a modification when the user sets the favorites
@@ -148,16 +157,21 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                             break;
                     }
                 }
+
+                //For Sorting
+                Collections.sort(chatMessageDetailsArrayList, new Comparator<ChatMessageDetails>() {
+                    @Override
+                    public int compare(ChatMessageDetails o1, ChatMessageDetails o2) {
+                        return o1.date.compareTo(o2.date);
+                    }
+                });
+
                 mainAdapter.notifyDataSetChanged();
+                mainRecyclerView.scrollToPosition(chatMessageDetailsArrayList.size()-1);
             }
         });
 
-        mainRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewChatRoomMessages);
-        mainLayoutManager = new LinearLayoutManager(ChatRoomActivity.this);
-        mainRecyclerView.setLayoutManager(mainLayoutManager);
-        // specify an adapter (see also next example)
-        mainAdapter = new ChatMessageAdapter(chatMessageDetailsArrayList, ChatRoomActivity.this);
-        mainRecyclerView.setAdapter(mainAdapter);
+
 
 
         findViewById(R.id.SendMessageButton).setOnClickListener(new View.OnClickListener() {
@@ -214,7 +228,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
 //                                                Toast.makeText(ChatRoomActivity.this, "Message sent!", Toast.LENGTH_SHORT).show();
                                                 Log.d("demo", chatMessageDetails.toString());
                                                 enterMessageText.setText("");
-                                                mainAdapter.notifyDataSetChanged();
+//                                                mainAdapter.notifyDataSetChanged();
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                     @Override
@@ -316,7 +330,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         Toast.makeText(ChatRoomActivity.this, "Message Deleted Successfully!", Toast.LENGTH_SHORT).show();
-                                        mainAdapter.notifyDataSetChanged();
+//                                        mainAdapter.notifyDataSetChanged();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                             @Override
