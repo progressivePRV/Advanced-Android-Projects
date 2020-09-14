@@ -9,14 +9,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChatRoomCreateActivity extends AppCompatActivity {
 
@@ -48,10 +54,11 @@ public class ChatRoomCreateActivity extends AppCompatActivity {
                                 public void onSuccess(DocumentSnapshot documentSnapshot) {
                                     if(!documentSnapshot.exists()){
                                         //Sending the new chatroomname to the chatRoom Activity so that we can add it to the Firebase there
-                                        Intent intent = new Intent();
-                                        intent.putExtra("chatRoomName",chatRoomName.getText().toString());
-                                        setResult(200, intent);
-                                        finish();
+//                                        Intent intent = new Intent();
+//                                        intent.putExtra("chatRoomName",chatRoomName.getText().toString());
+//                                        setResult(200, intent);
+//                                        finish();
+                                        createNewChatRoom(chatRoomName.getText().toString());
                                     }else{
                                         AlertDialog.Builder builder1 = new AlertDialog.Builder(ChatRoomCreateActivity.this);
                                         builder1.setMessage("A ChatRoom with same name already exists, Please give a different ChatRoom name!");
@@ -95,5 +102,25 @@ public class ChatRoomCreateActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return super.onSupportNavigateUp();
+    }
+
+    public void createNewChatRoom(String chatRoomName){
+        Map<String, Object> docData = new HashMap<>();
+        db.collection("ChatRoomList").document(chatRoomName).set(docData)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("demo", "Yes it is a success");
+                        Toast.makeText(ChatRoomCreateActivity.this, "ChatRoom successfully added", Toast.LENGTH_SHORT).show();
+//                        globalChatRoomList.add(chatRoomName);
+//                            mainAdapter.notifyDataSetChanged();
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(ChatRoomCreateActivity.this, "Some error occured in creating chatroom. Please try again", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

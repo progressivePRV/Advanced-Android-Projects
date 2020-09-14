@@ -175,7 +175,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     if (resultCode == RESULT_OK && data != null) {
                         Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
                         profileImage.setImageBitmap(selectedImage);
-                        isProfileImageSet=true;
+                        isProfileImageSet = true;
                     }
 
                     break;
@@ -187,7 +187,7 @@ public class EditProfileActivity extends AppCompatActivity {
                             final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                             profileImage.setImageBitmap(selectedImage);
                             profileImage.setTag("New Image");
-                            isProfileImageSet=true;
+                            isProfileImageSet = true;
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
                             Toast.makeText(EditProfileActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
@@ -195,10 +195,6 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                     break;
             }
-        }
-
-        if(requestCode == 1000 && resultCode == 2000){
-            finish();
         }
     }
 

@@ -118,11 +118,13 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ChatRoomCreateActivity.class);
-                startActivityForResult(intent, 100);
+                startActivity(intent);
             }
         });
 
 
+
+        globalChatRoomList = new ArrayList<>();
 
         db = FirebaseFirestore.getInstance();
         mainRecyclerView = (RecyclerView) getView().findViewById(R.id.chatRoomRecyclerView);
@@ -131,6 +133,7 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
         // specify an adapter
         mainAdapter = new ChatRoomAdapter(globalChatRoomList, frag_chatrooms.this);
         mainRecyclerView.setAdapter(mainAdapter);
+
 
         db.collection("ChatRoomList").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -145,34 +148,6 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
                 }
             }
         });
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        db = FirebaseFirestore.getInstance();
-        //super.onActivityResult(requestCode, resultCode, data);
-        //Here I will be getting the new chatRoom Name with a result code of 200.
-        //Adding it in the firebase and snapshot is added such that recycler view will automatically update it.
-        if(requestCode == 100 && resultCode == 200 && data!=null){
-            final String chatRoomName = data.getExtras().getString("chatRoomName");
-            Log.d("demo", chatRoomName);
-            Map<String, Object> docData = new HashMap<>();
-            db.collection("ChatRoomList").document(chatRoomName).set(docData)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.d("demo", "Yes it is a success");
-                            Toast.makeText(getActivity(), "ChatRoom successfully added", Toast.LENGTH_SHORT).show();
-                            globalChatRoomList.add(chatRoomName);
-                            mainAdapter.notifyDataSetChanged();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getActivity(), "Some error occured in creating chatroom. Please try again", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
     }
 
     @Override

@@ -71,8 +71,6 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-//                        Toast.makeText(ChatRoomActivity.this, "!", Toast.LENGTH_SHORT).show();
-                        mainAdapter.notifyDataSetChanged();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
