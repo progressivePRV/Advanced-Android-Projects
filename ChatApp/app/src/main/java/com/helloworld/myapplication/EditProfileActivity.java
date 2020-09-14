@@ -106,6 +106,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+                                hideProgressBarDialog();
                                 if (isProfileImageSet){
                                     callUpdateProfileImage();
                                 }else{
