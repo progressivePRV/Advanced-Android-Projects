@@ -222,7 +222,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 profileImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-
+                        Log.d(TAG, "onSuccess: got downlad url after upadting profile image in edit profile");
                         //call setDownloadable url in realtime database
                         setDownlaodUrl(uri.toString());
                     }
@@ -254,7 +254,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     Log.d(TAG, "onComplete: cannot write realtime data base for image url");
                 }
                 Toast.makeText(EditProfileActivity.this, "Edit Profile picture Successful!", Toast.LENGTH_LONG).show();
-                hideProgressBarDialog();
+                //hideProgressBarDialog();
                 finish();
             }
         });

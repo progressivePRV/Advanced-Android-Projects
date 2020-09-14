@@ -52,6 +52,7 @@ import java.util.Map;
  */
 public class frag_chatrooms extends Fragment implements ChatRoomAdapter.InteractWithRecyclerView{
 
+    private static final String TAG = "okay";
     private FirebaseFirestore db;
     FirebaseAuth mAuth;
     private RecyclerView mainRecyclerView;
@@ -113,6 +114,8 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        Log.d(TAG, "onViewCreated: fragment chatroom is called on screen");
         Button chatRoomAdd = getView().findViewById(R.id.ButtonChatRoomAdd);
         chatRoomAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,23 +159,11 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
         mAuth= FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser()!=null){
             showProgressBarDialog();
-            mDatabase = FirebaseDatabase.getInstance().getReference("users");
-            mDatabase.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    final DataSnapshot snap = snapshot;
-                    storage = FirebaseStorage.getInstance();
-                    storageReference = storage.getReference();
-                    final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getCurrentUser().getUid());
 
-                    //Setting up all the details of the user for the message
-                    user = new UserProfile(snap.child("firstName").getValue(String.class)
-                            ,snap.child("lastName").getValue(String.class)
-                            ,snap.child("gender").getValue(String.class)
-                            ,snap.child("email").getValue(String.class)
-                            ,snap.child("city").getValue(String.class)
-                            ,snap.child("profileImage").getValue(String.class)
-                            ,mAuth.getCurrentUser().getUid());
+                    SidebarActivity sidebarActivity = (SidebarActivity) getActivity();
+                    user = sidebarActivity.u;
+                    Log.d(TAG, "onDataChange: frag chatroom  got user from sidebar activity");
+
 
                     //Storing all the info along with the message in the firestore
                     db.collection("ChatRoomList").document(chatRoom)
@@ -194,13 +185,7 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
                         }
                     });
                     hideProgressBarDialog();
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(getActivity(), "Cancelled Operation", Toast.LENGTH_SHORT).show();
-                }
-            });
         }else{
             Toast.makeText(getActivity(), "User Not Logged In", Toast.LENGTH_SHORT).show();
             Log.d("demo","User not logged in");

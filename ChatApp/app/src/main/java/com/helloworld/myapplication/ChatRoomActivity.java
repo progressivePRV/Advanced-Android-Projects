@@ -46,6 +46,7 @@ import java.util.Comparator;
 
 public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAdapter.InteractWithRecyclerView{
 
+    private static final String TAG = "okay";
     FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private String chatRoomName;
@@ -63,7 +64,6 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
     //For deleting the users from the current user list of the chatroom
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         mAuth=FirebaseAuth.getInstance();
         db.collection("ChatRoomList").document(chatRoomName).collection("CurrentViewers")
                 .document(mAuth.getUid())
@@ -78,12 +78,15 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                 Toast.makeText(ChatRoomActivity.this, "Some error occured. Please press the back button again!", Toast.LENGTH_SHORT).show();
             }
         });
+        super.onBackPressed();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
+
+        Log.d(TAG, "onCreate: chatroomActivity is called");
 
         chatRoomName = getIntent().getExtras().getString("chatRoomName");
 
@@ -161,7 +164,9 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
             @Override
             public void onClick(View v) {
                 enterMessageText = findViewById(R.id.enterMessageText);
+                Log.d(TAG, "onClick: send button in chatroom activity clicked with text in textview ="+enterMessageText.getText());
                 if(checkValidations(enterMessageText)){
+                    Log.d(TAG, "onClick: in chatroom activity send text passed validatioins");
                     //Profile is taken from the realtime database in the below code.
                     mAuth=FirebaseAuth.getInstance();
                     if(mAuth.getCurrentUser()!=null){
@@ -335,23 +340,24 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
 
     @Override
     public boolean onSupportNavigateUp() {
-        mAuth=FirebaseAuth.getInstance();
-        db.collection("ChatRoomList").document(chatRoomName).collection("CurrentViewers")
-                .document(mAuth.getUid())
-                .delete()
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-//                        Toast.makeText(ChatRoomActivity.this, "!", Toast.LENGTH_SHORT).show();
-                        mainAdapter.notifyDataSetChanged();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(ChatRoomActivity.this, "Some error occured. Please press the back button again!", Toast.LENGTH_SHORT).show();
-            }
-        });
-        finish();
-        return super.onSupportNavigateUp();
+//        mAuth=FirebaseAuth.getInstance();
+//        db.collection("ChatRoomList").document(chatRoomName).collection("CurrentViewers")
+//                .document(mAuth.getUid())
+//                .delete()
+//                .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+////                        Toast.makeText(ChatRoomActivity.this, "!", Toast.LENGTH_SHORT).show();
+//                        mainAdapter.notifyDataSetChanged();
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(ChatRoomActivity.this, "Some error occured. Please press the back button again!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        finish();
+        onBackPressed();
+        return true;
     }
 }

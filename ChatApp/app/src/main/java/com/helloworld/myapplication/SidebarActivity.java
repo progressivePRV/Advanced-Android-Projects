@@ -33,6 +33,7 @@ public class SidebarActivity extends AppCompatActivity implements rvAdapterForUs
     ImageView profileImage;
     TextView tv_username;
     DatabaseReference mDatabase;
+    public UserProfile u;
     String uid;
 
     @Override
@@ -75,13 +76,15 @@ public class SidebarActivity extends AppCompatActivity implements rvAdapterForUs
 
 
 
-    void getCurrentUserData(String uid){
+    void getCurrentUserData(final String uid){
 
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         mDatabase.child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                User u = snapshot.getValue(User.class);
+                //User u = snapshot.getValue(User.class);
+                u = snapshot.getValue(UserProfile.class);
+                u.uid = uid;
                 Picasso.get().load(u.profileImage).into(profileImage);
                 username = u.firstName +" " +u.lastName;
                 tv_username.setText(username);
@@ -100,5 +103,9 @@ public class SidebarActivity extends AppCompatActivity implements rvAdapterForUs
         Intent i = new Intent(this,showProfile.class);
         i.putExtra("user",u);
         startActivity(i);
+    }
+
+    UserProfile getUserInfo(){
+        return u;
     }
 }
