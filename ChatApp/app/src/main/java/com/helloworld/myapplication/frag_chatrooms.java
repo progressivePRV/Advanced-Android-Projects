@@ -138,17 +138,24 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
         mainRecyclerView.setAdapter(mainAdapter);
 
 
-        db.collection("ChatRoomList").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        //Adding snapshot listener to the firestore
+        db.collection("ChatRoomList").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        globalChatRoomList.add(document.getId());
-                    }
-                    mainAdapter.notifyDataSetChanged();
-                } else {
-                    Log.d("demo", "Error getting documents: ", task.getException());
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("TAG", "listen:error", e);
+                    return;
                 }
+
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            globalChatRoomList.add(dc.getDocument().getId());
+                            break;
+                    }
+                }
+                mainAdapter.notifyDataSetChanged();
             }
         });
     }
