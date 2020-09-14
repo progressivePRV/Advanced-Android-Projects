@@ -61,11 +61,11 @@ public class SidebarActivity extends AppCompatActivity implements rvAdapterForUs
         getCurrentUserData(uid);
     }
 
-    @Override
-    public void onBackPressed() {
-        navController.popBackStack();
-        super.onBackPressed();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        navController.popBackStack();
+//        super.onBackPressed();
+//    }
 
     @Override
     public boolean onSupportNavigateUp() {
