@@ -35,4 +35,5 @@
     <string name="editProfileLabel">Edit Profile</string>
     <string name="edit">Edit</string>
     <string name="chatRoomNewButton">Create New Chat Room</string>
+    <string name="name">Name</string>
 </resources>
