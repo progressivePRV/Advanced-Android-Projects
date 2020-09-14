@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "okay";
     private FirebaseAuth mAuth;
     private ProgressDialog progressDialog;
 
@@ -116,10 +117,16 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                Toast.makeText(MainActivity.this, "Email for password reset sent", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Email for password reset sent", Toast.LENGTH_LONG).show();
                             }
                             else{
-                                Toast.makeText(MainActivity.this, "Failed to send password reset mail", Toast.LENGTH_SHORT).show();
+                                if(task.getException().getClass().getName().equals("com.google.firebase.auth.FirebaseAuthInvalidUserException")){
+                                    Toast.makeText(MainActivity.this, "User does not exist", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(MainActivity.this, "Failed to send password reset mail", Toast.LENGTH_SHORT).show();
+                                }
+
+                                Log.d(TAG, "onComplete: task fail=>"+task.getException().getClass().getName());
                             }
                         }
                     });
