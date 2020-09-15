@@ -127,8 +127,7 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
 
 
         // to get user from sidebaractivity and passing to new chatroom and enter a specific chatroom
-        SidebarActivity sidebarActivity = (SidebarActivity) getActivity();
-        user = sidebarActivity.u;
+
 
 
 
@@ -173,7 +172,8 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
             showProgressBarDialog();
 
                     Log.d(TAG, "onDataChange: frag chatroom  got user from sidebar activity");
-
+                    SidebarActivity sidebarActivity = (SidebarActivity) getActivity();
+                    user = sidebarActivity.u;
 
                     //Storing all the info along with the message in the firestore
                     db.collection("ChatRoomList").document(chatRoom)

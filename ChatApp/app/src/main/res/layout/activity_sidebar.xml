@@ -32,4 +32,5 @@
         app:headerLayout="@layout/nav_header"
         android:theme="@style/menu_item_size"
         app:menu="@menu/nav_menu" />
+
 </androidx.drawerlayout.widget.DrawerLayout>

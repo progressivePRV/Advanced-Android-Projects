@@ -4,11 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +38,9 @@ public class SidebarActivity extends AppCompatActivity implements rvAdapterForUs
     TextView tv_username;
     DatabaseReference mDatabase;
     public UserProfile u;
+    ProgressDialog progressDialog;
     String uid;
+    Fragment frag_c;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +49,9 @@ public class SidebarActivity extends AppCompatActivity implements rvAdapterForUs
 
         Toolbar t = findViewById(R.id.toolbar_for_sidebar);
         setSupportActionBar(t);
+        showProgressBarDialog();
+
+        frag_c = new frag_chatrooms();
 
         DrawerLayout drawerLayout = findViewById(R.id.drawer_for_sidebar);
         NavigationView navigationView = findViewById(R.id.nav_host);
@@ -88,6 +97,7 @@ public class SidebarActivity extends AppCompatActivity implements rvAdapterForUs
                 Picasso.get().load(u.profileImage).into(profileImage);
                 username = u.firstName +" " +u.lastName;
                 tv_username.setText(username);
+                hideProgressBarDialog();
             }
 
             @Override
@@ -105,7 +115,18 @@ public class SidebarActivity extends AppCompatActivity implements rvAdapterForUs
         startActivity(i);
     }
 
-    UserProfile getUserInfo(){
-        return u;
+    //for showing the progress dialog
+    public void showProgressBarDialog()
+    {
+        progressDialog = new ProgressDialog(SidebarActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+    //for hiding the progress dialog
+    public void hideProgressBarDialog()
+    {
+        progressDialog.dismiss();
     }
 }
