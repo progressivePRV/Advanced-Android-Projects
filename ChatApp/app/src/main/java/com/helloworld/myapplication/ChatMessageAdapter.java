@@ -67,6 +67,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 final DataSnapshot snap = snapshot;
+
                 name = snap.child("firstName").getValue(String.class);
 
                 Log.d("name", name);
@@ -74,7 +75,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.
                 holder.chatRoomMessageDate.setText(chatMessageDetails.date);
                 holder.NumberOfLikes.setText(chatMessageDetails.likedUsers.size()+"");
                 Picasso.get()
-                        .load(chatMessageDetails.imageUrl)
+                        .load(snap.child("profileImage").getValue(String.class))
                         .into(holder.ProfileImageChatRoom, new Callback() {
                             @Override
                             public void onSuccess() {
