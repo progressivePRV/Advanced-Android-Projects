@@ -126,6 +126,11 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
         });
 
 
+        // to get user from sidebaractivity and passing to new chatroom and enter a specific chatroom
+        SidebarActivity sidebarActivity = (SidebarActivity) getActivity();
+        user = sidebarActivity.u;
+
+
 
         globalChatRoomList = new ArrayList<>();
 
@@ -167,8 +172,6 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
         if(mAuth.getCurrentUser()!=null){
             showProgressBarDialog();
 
-                    SidebarActivity sidebarActivity = (SidebarActivity) getActivity();
-                    user = sidebarActivity.u;
                     Log.d(TAG, "onDataChange: frag chatroom  got user from sidebar activity");
 
 
@@ -183,6 +186,7 @@ public class frag_chatrooms extends Fragment implements ChatRoomAdapter.Interact
 //                                     Toast.makeText(ChatRoomActivity.this, "Message sent!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getActivity(), ChatRoomActivity.class);
                                     intent.putExtra("chatRoomName",chatRoom);
+                                    intent.putExtra("user",user);
                                     startActivity(intent);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {

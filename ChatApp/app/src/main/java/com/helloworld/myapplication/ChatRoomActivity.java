@@ -185,23 +185,9 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                     mAuth=FirebaseAuth.getInstance();
                     if(mAuth.getCurrentUser()!=null){
                         showProgressBarDialog();
-                        mDatabase = FirebaseDatabase.getInstance().getReference("users");
-                        mDatabase.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                final DataSnapshot snap = snapshot;
-                                storage = FirebaseStorage.getInstance();
-                                storageReference = storage.getReference();
-                                final StorageReference profileImageRef = storageReference.child("images/"+mAuth.getCurrentUser().getUid());
 
                                 //Setting up all the details of the user for the message
-                                user = new UserProfile(snap.child("firstName").getValue(String.class)
-                                        ,snap.child("lastName").getValue(String.class)
-                                        ,snap.child("gender").getValue(String.class)
-                                        ,snap.child("email").getValue(String.class)
-                                        ,snap.child("city").getValue(String.class)
-                                        ,snap.child("profileImage").getValue(String.class)
-                                        ,mAuth.getCurrentUser().getUid());
+                                user = (UserProfile) getIntent().getSerializableExtra("user");
 
                                 //For getting the date
                                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -237,13 +223,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                                     }
                                 });
                                 hideProgressBarDialog();
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-                                Toast.makeText(ChatRoomActivity.this, "Cancelled Operation", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                     } else{
                         Toast.makeText(ChatRoomActivity.this, "User Not Logged In", Toast.LENGTH_SHORT).show();
                         Log.d("demo","User not logged in");
