@@ -21,7 +21,7 @@ public class showProfile extends AppCompatActivity {
         Toolbar t = findViewById(R.id.toolbar_for_sidebar);
         t.setTitleTextColor(Color.WHITE);
         setSupportActionBar(t);
-        setTitle("User Profle");
+        setTitle("User Profile");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
