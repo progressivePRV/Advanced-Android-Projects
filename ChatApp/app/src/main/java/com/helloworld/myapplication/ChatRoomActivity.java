@@ -53,7 +53,11 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
     private RecyclerView mainRecyclerView;
     private RecyclerView.Adapter mainAdapter;
     private RecyclerView.LayoutManager mainLayoutManager;
+    private RecyclerView usersRecyclerView;
+    private RecyclerView.Adapter usersAdapter;
+    private RecyclerView.LayoutManager usersLayoutManager;
     ArrayList<ChatMessageDetails> chatMessageDetailsArrayList = new ArrayList<>();
+    ArrayList<UserProfile> currentUserList = new ArrayList<>();
     DatabaseReference mDatabase;
     FirebaseStorage storage;
     StorageReference storageReference;
@@ -109,6 +113,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
 //        });
         db = FirebaseFirestore.getInstance();
 
+        //For the chat Messages
         mainRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewChatRoomMessages);
         mainLayoutManager = new LinearLayoutManager(ChatRoomActivity.this);
         mainRecyclerView.setLayoutManager(mainLayoutManager);
@@ -116,9 +121,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
         mainAdapter = new ChatMessageAdapter(chatMessageDetailsArrayList, ChatRoomActivity.this);
         mainRecyclerView.setAdapter(mainAdapter);
 
-
-
-        //Adding snapshot listener to the firestore
+        //Adding snapshot listener to the firestore for the chatmessages
         db.collection("ChatRoomList").document(chatRoomName).collection("Messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot snapshots,
@@ -142,15 +145,15 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                         case REMOVED:
                             Log.d("TAG", "Removed Msg: " + dc.getDocument().toObject(ChatMessageDetails.class));
                             //Functionality to be completed yet
-                            int i=0;
+                            int i = 0;
                             ChatMessageDetails deletedChatMessage = dc.getDocument().toObject(ChatMessageDetails.class);
-                            for(ChatMessageDetails chatMessageDetails : chatMessageDetailsArrayList){
-                                if(chatMessageDetails.Uid.equals(deletedChatMessage.Uid) &&
-                                chatMessageDetails.date.equals(deletedChatMessage.date) &&
-                                chatMessageDetails.Message.equals(deletedChatMessage.Message)){
+                            for (ChatMessageDetails chatMessageDetails : chatMessageDetailsArrayList) {
+                                if (chatMessageDetails.Uid.equals(deletedChatMessage.Uid) &&
+                                        chatMessageDetails.date.equals(deletedChatMessage.date) &&
+                                        chatMessageDetails.Message.equals(deletedChatMessage.Message)) {
                                     chatMessageDetailsArrayList.remove(i);
                                     break;
-                                }else{
+                                } else {
                                     i++;
                                 }
                             }
@@ -167,88 +170,127 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                 });
 
                 mainAdapter.notifyDataSetChanged();
-                mainRecyclerView.scrollToPosition(chatMessageDetailsArrayList.size()-1);
+                mainRecyclerView.scrollToPosition(chatMessageDetailsArrayList.size() - 1);
             }
         });
 
 
+        //For the current Users
+        usersRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewFreshCurrentUsers);
+        usersLayoutManager = new LinearLayoutManager(ChatRoomActivity.this,
+                LinearLayoutManager.HORIZONTAL, false);
+        usersRecyclerView.setLayoutManager(usersLayoutManager);
+
+        usersAdapter = new CurrentUserAdapter(currentUserList, ChatRoomActivity.this);
+        usersRecyclerView.setAdapter(usersAdapter);
+
+        //Adding snapshot to the current users list in the chatroom
+        db.collection("ChatRoomList").document(chatRoomName)
+                .collection("CurrentViewers").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("TAG", "listen:error", e);
+                    return;
+                }
+
+                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                    switch (dc.getType()) {
+                        case ADDED:
+                            Log.d("TAG", "New Msg: " + dc.getDocument().getString("firstName"));
+                            UserProfile user = new UserProfile(dc.getDocument().getString("firstName"),
+                                    dc.getDocument().getString("lastName"),
+                                    dc.getDocument().getString("gender"),
+                                    dc.getDocument().getString("email"),
+                                    dc.getDocument().getString("city"),
+                                    dc.getDocument().getString("profileImage"),
+                                    dc.getDocument().getString("uid"));
+                            currentUserList.add(user);
+                            break;
+                        case MODIFIED:
+                            break;
+                        case REMOVED:
+                            int i = 0;
+                            UserProfile deletedUserProfile = dc.getDocument().toObject(UserProfile.class);
+                            for (UserProfile userProfile : currentUserList) {
+                                if (userProfile.uid.equals(deletedUserProfile.uid)) {
+                                    currentUserList.remove(i);
+                                    break;
+                                } else {
+                                    i++;
+                                }
+                            }
+                            break;
+                    }
+                }
+                usersAdapter.notifyDataSetChanged();
+            }
+        });
 
 
         findViewById(R.id.SendMessageButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 enterMessageText = findViewById(R.id.enterMessageText);
-                Log.d(TAG, "onClick: send button in chatroom activity clicked with text in textview ="+enterMessageText.getText());
-                if(checkValidations(enterMessageText)){
+                Log.d(TAG, "onClick: send button in chatroom activity clicked with text in textview =" + enterMessageText.getText());
+                if (checkValidations(enterMessageText)) {
                     Log.d(TAG, "onClick: in chatroom activity send text passed validatioins");
                     //Profile is taken from the realtime database in the below code.
-                    mAuth=FirebaseAuth.getInstance();
-                    if(mAuth.getCurrentUser()!=null){
+                    mAuth = FirebaseAuth.getInstance();
+                    if (mAuth.getCurrentUser() != null) {
                         showProgressBarDialog();
 
-                                //Setting up all the details of the user for the message
-                                user = (UserProfile) getIntent().getSerializableExtra("user");
+                        //Setting up all the details of the user for the message
+                        user = (UserProfile) getIntent().getSerializableExtra("user");
 
-                                //For getting the date
-                                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                                LocalDateTime now = LocalDateTime.now();
+                        //For getting the date
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        LocalDateTime now = LocalDateTime.now();
 
-                                //Loading everything into the ChatMessageDetails
-                                final ChatMessageDetails chatMessageDetails = new ChatMessageDetails();
-                                chatMessageDetails.firstname = user.firstName;
-                                chatMessageDetails.Message = enterMessageText.getText().toString();
-                                chatMessageDetails.Uid = mAuth.getUid();
-                                chatMessageDetails.date = dtf.format(now);
-                                chatMessageDetails.likedUsers = new ArrayList<>();
-                                chatMessageDetails.imageUrl = user.profileImage;
+                        //Loading everything into the ChatMessageDetails
+                        final ChatMessageDetails chatMessageDetails = new ChatMessageDetails();
+                        chatMessageDetails.firstname = user.firstName;
+                        chatMessageDetails.Message = enterMessageText.getText().toString();
+                        chatMessageDetails.Uid = mAuth.getUid();
+                        chatMessageDetails.date = dtf.format(now);
+                        chatMessageDetails.likedUsers = new ArrayList<>();
+                        chatMessageDetails.imageUrl = user.profileImage;
 
-                                //Document ID is now the user ID plus the message date. so that this can be used when updating the liked user field.
-                                String documentID = chatMessageDetails.Uid+""+chatMessageDetails.date;
-                                //Storing all the info along with the message in the firestore
-                                db.collection("ChatRoomList").document(chatRoomName).collection("Messages")
-                                        .document(documentID)
-                                        .set(chatMessageDetails)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-//                                                Toast.makeText(ChatRoomActivity.this, "Message sent!", Toast.LENGTH_SHORT).show();
-                                                Log.d("demo", chatMessageDetails.toString());
-                                                enterMessageText.setText("");
-//                                                mainAdapter.notifyDataSetChanged();
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
+                        //Document ID is now the user ID plus the message date. so that this can be used when updating the liked user field.
+                        String documentID = chatMessageDetails.Uid + "" + chatMessageDetails.date;
+                        //Storing all the info along with the message in the firestore
+                        db.collection("ChatRoomList").document(chatRoomName).collection("Messages")
+                                .document(documentID)
+                                .set(chatMessageDetails)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(ChatRoomActivity.this, "Some error occured. Please try again", Toast.LENGTH_SHORT).show();
+                                    public void onComplete(@NonNull Task<Void> task) {
+//                                                Toast.makeText(ChatRoomActivity.this, "Message sent!", Toast.LENGTH_SHORT).show();
+                                        Log.d("demo", chatMessageDetails.toString());
+                                        enterMessageText.setText("");
+//                                                mainAdapter.notifyDataSetChanged();
                                     }
-                                });
-                                hideProgressBarDialog();
+                                }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(ChatRoomActivity.this, "Some error occured. Please try again", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        hideProgressBarDialog();
 
-                    } else{
+                    } else {
                         Toast.makeText(ChatRoomActivity.this, "User Not Logged In", Toast.LENGTH_SHORT).show();
-                        Log.d("demo","User not logged in");
+                        Log.d("demo", "User not logged in");
                     }
-                }else{
+                } else {
                     //The message string is empty!
                     Toast.makeText(ChatRoomActivity.this, "Message cannot be empty!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        //For viewing the current users
-        findViewById(R.id.viewUsersButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ChatRoomActivity.this, ViewersListActivity.class);
-                intent.putExtra("chatRoomName",chatRoomName);
-                //started activity for result because when the user comes back the user profile should be deleted from the currentViewers database
-                startActivity(intent);
-            }
-        });
-
-
     }
-
     //For checking the empty strings
     public boolean checkValidations(EditText editText){
         if(editText.getText().toString().trim().equals("")){
