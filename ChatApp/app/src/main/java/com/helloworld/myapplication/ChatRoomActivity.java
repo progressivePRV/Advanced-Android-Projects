@@ -43,6 +43,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAdapter.InteractWithRecyclerView{
 
@@ -254,7 +255,7 @@ public class ChatRoomActivity extends AppCompatActivity implements ChatMessageAd
                         chatMessageDetails.Message = enterMessageText.getText().toString();
                         chatMessageDetails.Uid = mAuth.getUid();
                         chatMessageDetails.date = dtf.format(now);
-                        chatMessageDetails.likedUsers = new ArrayList<>();
+                        chatMessageDetails.likedUsers = new HashMap<String,Boolean>();
                         chatMessageDetails.imageUrl = user.profileImage;
 
                         //Document ID is now the user ID plus the message date. so that this can be used when updating the liked user field.
